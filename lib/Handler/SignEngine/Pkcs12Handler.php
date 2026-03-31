@@ -117,7 +117,7 @@ class Pkcs12Handler extends SignEngineHandler {
 			return $result;
 		}
 
-		$decoded = ASN1::decodeBER($signature);
+		$decoded = ASN1::decodeBER($signature) ?? [];
 		$result = $this->extractTimestampData($decoded, $result);
 
 		$chain = $this->extractCertificateChain($signature);
@@ -163,6 +163,10 @@ class Pkcs12Handler extends SignEngineHandler {
 	}
 
 	private function extractTimestampData(array $decoded, array $result): array {
+		if (empty($decoded)) {
+			return $result;
+		}
+
 		$tsa = new TSA();
 
 		try {
